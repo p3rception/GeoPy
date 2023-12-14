@@ -194,3 +194,4 @@ pyrightconfig.json
 test*
 GeoLiteCity.dat
 *.kml
+.DS_Store
