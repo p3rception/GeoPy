@@ -40,7 +40,8 @@ GeoPy is a Python script that generates a KML file based on network traffic data
 
 1. ```python main.py <pcap_file> ```
 2. Upload the generated KML file to [Google My Maps](https://www.google.com/mymaps).
-
+3. Result:
+<img src="https://i.imgur.com/OzUoPRf.png" width=800>
 
 ## Author
 
