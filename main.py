@@ -1,10 +1,77 @@
+#!/usr/bin/env python3
+#
+# Author: Dimitris Pergelidis (p3rception)
+
 import os
 import sys
 import dpkt
+import shutil
 import socket
 import pygeoip
 import requests
+from time import sleep
 from webbrowser import open_new_tab as browser
+
+# ---------------- Banner ---------------- #
+
+def haxor_print(text, leading_spaces=0):
+   text_chars = list(text)
+   current, mutated = '', ''
+
+   for i in range(len(text)):
+      original = text_chars[i]
+      current += original
+      mutated += f'\033[1;38;5;82m{text_chars[i].upper()}\033[0m'
+      print(f'\r{" " * leading_spaces}{mutated}', end='')
+      sleep(0.07)
+      print(f'\r{" " * leading_spaces}{current}', end='')
+      mutated = current
+
+   print(f'\r{" " * leading_spaces}{text}\n')
+
+def print_banner(): 
+   print('\r')
+   padding = '  '
+
+   G = [['┌', '─','┐'], ['│', ' ', '┬'],['└', '─', '┘']]
+   E = [[' ', '┌', '─','┐'], [' ', '├', '┤', ' '],[' ', '└', '─', '┘']]
+   O = [[' ', '┌','─','┐'], [' ', '│',' ','│'], [' ', '└','─','┘']]
+   P = [[' ','┌', '─','┐'], [' ', '├', '─', '┘'],[' ','┴', ' ', ' ']]
+   Y = [[' ', '┬', ' ','┬'], [' ', '└', '┬', '┘'],[' ', ' ', '┴', ' ']]
+
+   banner = [G,E,O,P,Y]
+   final = []
+   init_color = 97
+   txt_color = init_color
+   cl = 0
+
+   for charset in range(0, 3):
+      for pos in range(0, len(banner)):
+         for i in range(0, len(banner[pos][charset])):
+            clr = f'\033[38;5;{txt_color}m'
+            char = f'{clr}{banner[pos][charset][i]}'
+            final.append(char)
+            cl += 1
+            txt_color = txt_color + 36 if cl <= 3 else txt_color
+
+         cl = 0
+
+         txt_color = init_color
+      init_color += 1
+
+      if charset < 2:
+         final.append('\n   ')
+
+   print(f"   {''.join(final)}\033[0m")
+   haxor_print('by p3rception', 17)
+
+   # Dynamic horizontal line
+   terminal_width = shutil.get_terminal_size().columns
+   dynamic_line = '─' * terminal_width
+   print(f"{dynamic_line}\n")
+
+
+# -------------- Main functions -------------- #
 
 # The database used for IP address translation into GeoLocation
 # Got it from https://github.com/mbcc2006/GeoLiteCity-data/tree/master
@@ -57,6 +124,8 @@ def plotIPs(pcap, src):
    return kmlPts
 
 def main():
+   print_banner()
+
    if len(sys.argv) != 2:
       print("Usage: python main.py <pcap_file>")
       return
@@ -87,11 +156,15 @@ def main():
    with open(output_filename, 'w') as kml_file:
       kml_file.write(kmldoc)
    print(f'The output has been saved to {output_filename}')
-   print('Upload it to https://www.google.com/mymaps to see the results.')
+   print('\nUpload it to https://www.google.com/mymaps to see the results.')
    
-   open_in_browser = input('Do you want to open mymaps in a new browser tab? (y/N): ').lower().strip()
+   open_in_browser = input('\nDo you want to open mymaps in a new browser tab? (y/N): ').lower().strip()
    if open_in_browser == 'y':
       browser('https://www.google.com/mymaps')
 
-if __name__ == '__main__':
-   main()
+
+if __name__ == "__main__":
+   try:
+      main()
+   except KeyboardInterrupt:
+      quit()

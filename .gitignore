@@ -193,3 +193,4 @@ pyrightconfig.json
 *.pcap
 test*
 GeoLiteCity.dat
+*.kml
