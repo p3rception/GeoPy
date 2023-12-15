@@ -74,7 +74,6 @@ def print_banner():
 # -------------- Main functions -------------- #
 
 # The database used for IP address translation into GeoLocation
-# Got it from https://github.com/mbcc2006/GeoLiteCity-data/tree/master
 db = pygeoip.GeoIP('GeoLiteCity.dat')
 
 def get_public_ip():
@@ -130,17 +129,22 @@ def main():
       print("Usage: python main.py <pcap_file>")
       return
    
-   public_ip = get_public_ip()
-   if not public_ip:
-      print("Could not determine public IP. Exiting.")
-      return
-   
-   # pcap_file = 'test.pcap'
    pcap_file = sys.argv[1]
    pcap_name, pcap_ext = os.path.splitext(pcap_file)
 
-   f = open(pcap_file, 'rb') # Open in binary format
+   if pcap_ext != ".pcap":
+      print("Error: Please provide a valid .pcap file.")
+      return
+   
+   public_ip = get_public_ip()
+   if not public_ip:
+      print("Error: Could not determine public IP.")
+      return
+
+   f = open(pcap_file, 'rb') # Needs to be opened in binary format
    pcap = dpkt.pcap.Reader(f)
+   
+   # Using KML, an XML-based file format used to display geographic data
    kmlheader = '<?xml version="1.0" encoding="UTF-8"?> \n<kml xmlns="http://www.opengis.net/kml/2.2">\n<Document>\n'\
    '<Style id="anyName">' \
                '<LineStyle>' \
@@ -149,8 +153,11 @@ def main():
                '</LineStyle>' \
                '</Style>'
    kmlfooter = '</Document>\n</kml>\n'
+   
+   # Assemble the completed file
    kmldoc = kmlheader + plotIPs(pcap, public_ip) + kmlfooter
 
+   # Add the pcap file's name to the generated KML file
    output_filename = f"map-{pcap_name}.kml"
 
    with open(output_filename, 'w') as kml_file:
@@ -158,7 +165,7 @@ def main():
    print(f'The output has been saved to {output_filename}')
    print('\nUpload it to https://www.google.com/mymaps to see the results.')
    
-   open_in_browser = input('\nDo you want to open mymaps in a new browser tab? (y/N): ').lower().strip()
+   open_in_browser = input('\nDo you want to open Google MyMaps in a new browser tab? (y/N): ').lower().strip()
    if open_in_browser == 'y':
       browser('https://www.google.com/mymaps')
 
