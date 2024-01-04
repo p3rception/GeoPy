@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/E9GJVaL.png" width=300>
+<img src="https://i.imgur.com/2aadxzb.png" width=300>
 <hr>
 
 GeoPy is a Python script that generates a KML file based on network traffic data from a Wireshark pcap file. It uses IP geolocation to map the network connections and creates a KML file that can be uploaded to Google My Maps for visualization.
